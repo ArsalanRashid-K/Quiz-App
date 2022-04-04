@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         btn_start.setOnClickListener{
 //             checking if the edit text is empty or not
             if (et_name.text.toString().isEmpty()){
-                Toast.makeText(this,"please eneter your name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"please enter your name", Toast.LENGTH_SHORT).show()
             }else{
 //              intent to trandfer from this page to  QuizQuestionsActivity
                 val intent = Intent(this, QuizQuestionsActivity::class.java)

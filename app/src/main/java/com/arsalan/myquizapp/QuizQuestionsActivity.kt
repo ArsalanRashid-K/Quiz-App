@@ -1,17 +1,149 @@
 package com.arsalan.myquizapp
 
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import kotlin.math.log
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 
-class QuizQuestionsActivity : AppCompatActivity() {
+class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
+//     OnClickListener - enable us to click item in side of this
+
+    private var mCurrentPosition :Int=1
+    private var mQuestionList :ArrayList<Question>? =null
+    private var mSelectedOptionPosition:Int=0
+
+    private var progressBar:ProgressBar?=null
+    private var tvProgress:TextView?=null
+    private var tvQuestion:TextView?=null
+    private var ivImage:ImageView?=null
+
+    private var tvOptionOne:TextView?=null
+    private var tvOptionTwo:TextView?=null
+    private var tvOptionThree:TextView?=null
+    private var tvOptionFour:TextView?=null
+    private var btnSubmit:Button?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz_questions)
 
-        val questionsList = Constants.getQuestions()
-        Log.e("Questions Size", "${questionsList.size}")
+        progressBar=findViewById(R.id.progressBar)
+        tvProgress=findViewById(R.id.tv_progress)
+        tvQuestion=findViewById(R.id.tv_question)
+        ivImage=findViewById(R.id.iv_image)
+        btnSubmit=findViewById(R.id.btn_submit)
+
+        tvOptionOne=findViewById(R.id.tv_option_one)
+        tvOptionTwo=findViewById(R.id.tv_option_two)
+        tvOptionThree=findViewById(R.id.tv_option_three)
+        tvOptionFour=findViewById(R.id.tv_option_four)
+
+        tvOptionOne?.setOnClickListener(this)
+        tvOptionTwo?.setOnClickListener(this)
+        tvOptionThree?.setOnClickListener(this)
+        tvOptionFour?.setOnClickListener(this)
+        btnSubmit?.setOnClickListener(this)
+
+        mQuestionList = Constants.getQuestions()
+
+        setQuestion()
+        defaultOptionsView()
+
 
     }
+
+
+    private fun setQuestion() {
+
+        //        currentPosition=1 not zero coz question always start with one
+
+        val question: Question = mQuestionList!![mCurrentPosition - 1]
+        progressBar?.progress = mCurrentPosition
+        tvProgress?.text = "$mCurrentPosition/${progressBar?.max}"
+        tvQuestion?.text = question.question
+
+        ivImage?.setImageResource(question.image)
+        tvOptionOne?.text = question.optionOne
+        tvOptionTwo?.text = question.optionTwo
+        tvOptionThree?.text = question.optionThree
+        tvOptionFour?.text = question.optionFour
+
+
+        if (mCurrentPosition == mQuestionList!!.size){
+            btnSubmit?.text="FINISH"
+        }else{
+            btnSubmit?.text="SUBMIT"
+        }
+    }
+
+    private fun defaultOptionsView(){
+        val options=ArrayList<TextView>()
+        tvOptionOne?.let { options.add(0,it) }
+        tvOptionTwo?.let { options.add(1,it) }
+        tvOptionThree?.let { options.add(2,it) }
+        tvOptionFour?.let { options.add(3,it) }
+
+
+        for(option in options){
+
+            option.setTextColor(Color.parseColor("#807a7b"))
+            option.typeface= Typeface.DEFAULT
+            option.background=ContextCompat.getDrawable(
+                this,R.drawable.default_option_border_bg
+            )
+        }
+    }
+    private fun seletedOptionView(tv:TextView,selectedOptionNum:Int){
+
+        defaultOptionsView()
+        mSelectedOptionPosition=selectedOptionNum
+        tv.setTextColor(Color.parseColor("#000000"))
+        tv.setTypeface(tv.typeface,Typeface.BOLD)
+        tv.background=ContextCompat.getDrawable(
+            this,R.drawable.selected_option_border_bg
+        )
+    }
+
+    override fun onClick(view: View?) {
+        when(view?.id){
+            R.id.tv_option_one->{
+                tvOptionOne?.let {
+                    seletedOptionView(it,1)
+                }
+            }R.id.tv_option_two->{
+                tvOptionTwo?.let {
+                    seletedOptionView(it,2)
+                }
+            }R.id.tv_option_three->{
+                tvOptionThree?.let {
+                    seletedOptionView(it,3)
+                }
+            }
+            R.id.tv_option_four->{
+                tvOptionFour?.let {
+                    seletedOptionView(it,4)
+                }
+
+//            R.id.btn_submit-> {
+//                      // TODO "implement btn submit"
+//
+//                }
+            }
+        }
+    }
+
+//    private fun answerView(answer:Int,drawableView:Int){
+//        when (answer){
+//            1->{
+//
+//            }
+//        }
+//    }
 }
